@@ -2,9 +2,12 @@
   "name": "pivet",
   "version": "0.0.1",
   "description": "Convert VexTab into Sonic Pi code!",
-  "main": "index.js",
+  "main": "dist/main.js",
   "scripts": {
-    "test": "npm test"
+    "test": "npm test",
+    "lint": "tslint ./**.ts",
+    "build": "tsc",
+    "now": "node dist/main.js"
   },
   "repository": {
     "type": "git",
@@ -27,8 +30,13 @@
   },
   "homepage": "https://github.com/LOZORD/pivet#readme",
   "devDependencies": {
+    "@types/lodash": "^4.14.38",
+    "@types/node": "^6.0.46",
     "tsc": "^1.20150623.0",
     "tslint": "^3.15.1",
     "typescript": "^2.0.9"
+  },
+  "dependencies": {
+    "lodash": "^4.16.6"
   }
 }

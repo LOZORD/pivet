@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "sourceMap": true,
+    "allowJs": true,
+    "pretty": false,
+    "strictNullChecks": true,
+    "traceResolution": false
+  },
+  "exclude": [
+    "dist",
+    "node_modules",
+    "assets"
+  ]
+}
