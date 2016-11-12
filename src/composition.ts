@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 export type Accidental = 'Natural' | 'Flat' | 'Sharp' | 'Double Flat' | 'Double Sharp';
 
 export type Pitch = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
@@ -38,12 +40,53 @@ export interface TabStave {
   tuning: GuitarTuning;
 }
 
+export const DEFAULT_TAB_STAVE: TabStave = {
+  notation: true,
+  tablature: true,
+  measures: [],
+  clef: 'Treble',
+  key: 'C',
+  time: {
+    beatNote: 4,
+    beatsPerMeasure: 4
+  },
+  tuning: 'Standard'
+};
+
 export interface Composition {
   tabStaves: TabStave[];
 }
 
+//export const HEADER_REGEXP: RegExp = /tabstave((notation=(true)|(false)))*/
+
+export function parseMeasures(notes: string): Measure[] {
+  return [];
+}
+
+export function parseTabStave(tabStaveHeaderLine: string, noteLine: string): TabStave {
+  console.log('Got lines: ', tabStaveHeaderLine, '\n', noteLine);
+  const cleanHeader = tabStaveHeaderLine.trim();
+  const cleanNotes = noteLine.trim();
+
+  const myTabStave = _.extend({}, DEFAULT_TAB_STAVE); // TODO: parse header
+
+  const measures = parseMeasures(cleanNotes);
+
+  myTabStave.measures = measures;
+
+  return myTabStave;
+}
+
 export function parseVexTab(vexTab: string): Composition {
-  return {tabStaves: []};
+  const lines = vexTab.trim().split('\n');
+
+  const tabStaveLinePairs = _.chunk(lines, 2);
+
+  return {
+    tabStaves: tabStaveLinePairs.map(([tabStaveHeaderLine, noteLine]) => {
+      return parseTabStave(tabStaveHeaderLine, noteLine);
+    })
+  };
 }
 
 export function compositionToSonicPi(composition: Composition): string {
