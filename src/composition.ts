@@ -59,7 +59,23 @@ export interface Composition {
 
 //export const HEADER_REGEXP: RegExp = /tabstave((notation=(true)|(false)))*/
 
+//export const NOTES_REGEX = /notes ((((\d)+-?)+\/(\d))(|(((\d)+-?)+\/(\d)))*)/;
+
+export const NOTES_REGEX = /notes(( ((\d+)\/(\d+)))+)/;
+
+//export const NAIVE_NOTES_REGEX = 
+
 export function parseMeasures(notes: string): Measure[] {
+  const parse = notes.match(NOTES_REGEX);
+
+  if (!parse) {
+    throw new Error(`Could not parse \`${notes}\``);
+  }
+
+  const fretStringPairs = parse[1].trim();
+
+  console.log(fretStringPairs);
+
   return [];
 }
 
