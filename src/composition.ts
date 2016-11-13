@@ -227,5 +227,5 @@ export function compositionToSonicPi(composition: Composition): string {
     return outputTabStave(tabStave);
   });
 
-  return outputTabStaves.join('\n\n\nsleep 4\n\n\n');
+  return `use_synth :piano\n${outputTabStaves.join('\n\n\nsleep 4\n\n\n')}\n`;
 }
