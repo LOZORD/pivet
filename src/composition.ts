@@ -102,17 +102,17 @@ export const STANDARD_TUNING_NOTES: Note[][] = [[
   {
     pitch: 'A',
     accidental: 'Natural',
-    octave: 4
+    octave: 3
   },
   {
     pitch: 'A',
     accidental: 'Sharp',
-    octave: 4
+    octave: 3
   },
   {
     pitch: 'B',
     accidental: 'Natural',
-    octave: 4
+    octave: 3
   }, {
     pitch: 'C',
     accidental: 'Natural',
@@ -161,6 +161,7 @@ export function parseMeasureNotes(measureStr: string): Measure {
 }
 
 export function parseMeasures(notes: string): Measure[] {
+  console.log('NOTES', notes);
   const parse = notes.match(MEASURE_NOTES_REGEX);
 
   if (!parse) {
@@ -201,6 +202,30 @@ export function parseVexTab(vexTab: string): Composition {
   };
 }
 
+export function accidentalToSonicPiAccidental(accidental: Accidental): string {
+  if (accidental === 'Natural') {
+    return '';
+  } else if (accidental === 'Sharp') {
+    return 's';
+  } else {
+    return 'f';
+  }
+}
+
+export function noteToSonicPiSymbol(note: Note): string {
+  return `:${note.pitch}${accidentalToSonicPiAccidental(note.accidental)}${note.octave.toString()}`;
+}
+
+export function outputTabStave(tabStave: TabStave): string {
+  return tabStave.measures.map(measure => {
+    return measure.notes.map(note => `play ${noteToSonicPiSymbol(note)}`).join('\nsleep 0.5\n');
+  }).join('\n\nsleep 2\n\n');
+}
+
 export function compositionToSonicPi(composition: Composition): string {
-  return '';
+  const outputTabStaves = composition.tabStaves.map(tabStave => {
+    return outputTabStave(tabStave);
+  });
+
+  return outputTabStaves.join('\n\n\nsleep 4\n\n\n');
 }
