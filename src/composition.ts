@@ -7,14 +7,20 @@ export type Pitch = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
 export interface Note {
   accidental: Accidental;
   pitch: Pitch;
+  octave: number;
 }
 
-export interface Chord {
-  notes: Note[];
-}
+// export interface Chord {
+//   notes: Note[];
+// }
 
+// export interface Measure {
+//   chords: Chord[];
+// }
+
+// The above definitions are better, but chords can be a future feature...
 export interface Measure {
-  chords: Chord[];
+  notes: Note[];
 }
 
 export type GuitarTuning = 'Standard';
@@ -61,22 +67,112 @@ export interface Composition {
 
 //export const NOTES_REGEX = /notes ((((\d)+-?)+\/(\d))(|(((\d)+-?)+\/(\d)))*)/;
 
-export const NOTES_REGEX = /notes(( ((\d+)\/(\d+)))+)/;
+//export const NOTES_REGEX = /notes((\s+((\d+)\/(\d+)))+)/;
+
+export const MEASURE_NOTES_REGEX = /notes(((\s*((\d+)\/(\d+))\s*)+\|?)+)/;
 
 //export const NAIVE_NOTES_REGEX = 
 
+// A 2-D of array representing the 6 strings and 24 frets of a guitar
+export const STANDARD_TUNING_NOTES: Note[][] = [[
+  {
+    pitch: 'E',
+    accidental: 'Natural',
+    octave: 3
+  },
+  {
+    pitch: 'F',
+    accidental: 'Natural',
+    octave: 3
+  },
+  {
+    pitch: 'F',
+    accidental: 'Sharp',
+    octave: 3
+  }, {
+    pitch: 'G',
+    accidental: 'Natural',
+    octave: 3
+  },
+  {
+    pitch: 'G',
+    accidental: 'Sharp',
+    octave: 3
+  },
+  {
+    pitch: 'A',
+    accidental: 'Natural',
+    octave: 4
+  },
+  {
+    pitch: 'A',
+    accidental: 'Sharp',
+    octave: 4
+  },
+  {
+    pitch: 'B',
+    accidental: 'Natural',
+    octave: 4
+  }, {
+    pitch: 'C',
+    accidental: 'Natural',
+    octave: 4
+  },
+  {
+    pitch: 'C',
+    accidental: 'Sharp',
+    octave: 4
+  },
+  {
+    pitch: 'D',
+    accidental: 'Natural',
+    octave: 4,
+  }, {
+    pitch: 'D',
+    accidental: 'Sharp',
+    octave: 4
+  }, {
+    pitch: 'E',
+    accidental: 'Natural',
+    octave: 4
+  }
+]];
+
+export const STRING_LENGTH = 24;
+export const NUM_FRETS_PER_STRING = STRING_LENGTH;
+
+export function parseNote(noteStr: string): Note {
+  const [fretNum, stringNum] = noteStr.trim().split('/').map(str => parseInt(str, 10));
+
+  const adjustedStringNum = 6 - stringNum;
+
+  return STANDARD_TUNING_NOTES[adjustedStringNum][fretNum];
+}
+
+export function parseMeasureNotes(measureStr: string): Measure {
+  const cleanMeasure = measureStr.trim();
+  console.log('GOT MEASURE', cleanMeasure);
+
+  const notes: Note[] = cleanMeasure.split(/\s/).map(noteStr => {
+    return parseNote(noteStr);
+  });
+
+  return { notes };
+}
+
 export function parseMeasures(notes: string): Measure[] {
-  const parse = notes.match(NOTES_REGEX);
+  const parse = notes.match(MEASURE_NOTES_REGEX);
 
   if (!parse) {
     throw new Error(`Could not parse \`${notes}\``);
   }
 
-  const fretStringPairs = parse[1].trim();
+  const measures = parse[1].trim();
+  console.log('MEASURES', measures);
 
-  console.log(fretStringPairs);
-
-  return [];
+  return measures.split('|').map(measureNotes => {
+    return parseMeasureNotes(measureNotes);
+  });
 }
 
 export function parseTabStave(tabStaveHeaderLine: string, noteLine: string): TabStave {

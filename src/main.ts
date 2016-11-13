@@ -17,6 +17,8 @@ function main(): void {
 
     const composition = Composition.parseVexTab(input);
 
+    console.log('COMPOSITION', composition);
+
     const output = Composition.compositionToSonicPi(composition);
 
     FS.writeFile(outFileName, output, (outErr) => {
